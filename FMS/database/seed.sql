@@ -19,6 +19,16 @@ INSERT INTO study_levels (name, description) VALUES
     ('Bachelors Degree', NULL),
     ('Masters Degree', NULL);
 
+INSERT INTO nationalities (name, code) VALUES
+    ('Kenyan', 'KE'),
+    ('Ugandan', 'UG'),
+    ('Tanzanian', 'TZ'),
+    ('Other', NULL);
+
+INSERT INTO institutions (name, code) VALUES
+    ('Example University', 'EX-U'),
+    ('Example Technical Institute', 'EX-TI');
+
 INSERT INTO comment_types (name, code, description) VALUES
     ('Rejection Reason', 'rejection_reason', 'Reason given when an application is rejected'),
     ('Correction Request', 'correction_request', 'What the student must fix before resubmitting'),

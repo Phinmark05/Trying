@@ -147,7 +147,37 @@ Verify Phase 4 (do each of these yourself):
 - [ ] Visit a dashboard after logout → bounced to login
 - [ ] `SELECT password_hash FROM users;` → bcrypt hashes, never plain text
 
+## PHASE 6 — Student profile
+
+New files:
+
+- `models/Student.php` — SQL for the students table plus the dropdown
+  lookups (institutions, nationalities, study levels). `saveProfile()`
+  INSERTs on first save, UPDATEs afterwards; `user_id` always comes from
+  the SESSION, never from the form (a student cannot edit someone else's
+  profile by tampering with an ID).
+- `controllers/StudentController.php` — dashboard + profile actions;
+  validates every field server-side and re-checks the "registration number
+  unique per institution" rule with a friendly message before the database
+  would reject it.
+- `views/student/dashboard.php` — shows profile summary, or a "complete
+  your profile" prompt (applying is blocked until the profile exists).
+- `views/student/profile.php` — the form; note the pre-fill pattern where
+  just-typed values win over stored values after a validation error.
+
+`database/seed.sql` gained sample institutions and nationalities so the
+dropdowns are not empty (re-run it or insert your real ones).
+
+Verify Phase 6:
+
+- [ ] Login as a new student → dashboard says profile is incomplete
+- [ ] Save with an empty name / no institution → validation errors, typed values kept
+- [ ] Save a valid profile → redirected to dashboard showing your details
+- [ ] Edit and re-save → values update
+- [ ] Second student using the same registration number + institution → friendly error
+- [ ] Admin visiting `?page=profile` → 403
+
 ## Next phases
 
-Phases 6–16: student profile, applications,
+Phases 7–16: applications,
 admin review, placements, notifications, dashboards.

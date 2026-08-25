@@ -13,11 +13,13 @@
  */
 require __DIR__ . '/../config/session.php';
 require __DIR__ . '/../controllers/AuthController.php';
+require __DIR__ . '/../controllers/StudentController.php';
 
 // Which page was asked for? Default to the login page.
 $page = $_GET['page'] ?? 'login';
 
 $auth = new AuthController();
+$studentController = new StudentController();
 
 switch ($page) {
     case 'login':
@@ -32,15 +34,12 @@ switch ($page) {
         $auth->logout();
         break;
 
-    // Temporary placeholder dashboards — real ones arrive in later phases.
     case 'student_dashboard':
-        require_role('student');
-        $pageTitle = 'Student Dashboard';
-        require __DIR__ . '/../views/layouts/header.php';
-        echo '<div class="auth-box"><h1>Welcome, ' . e($_SESSION['username']) . '</h1>'
-           . '<p>You are logged in as a <strong>student</strong>.</p>'
-           . '<p><a href="index.php?page=logout">Log out</a></p></div>';
-        require __DIR__ . '/../views/layouts/footer.php';
+        $studentController->dashboard();
+        break;
+
+    case 'profile':
+        $studentController->profile();
         break;
 
     case 'admin_dashboard':

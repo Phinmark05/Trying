@@ -39,6 +39,10 @@ button {
     cursor: pointer;
 }
 button:hover { background: #155ec2; }
+select { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ccc; border-radius: 4px; }
+.profile-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.profile-table th { text-align: left; padding: 0.4rem 0.6rem 0.4rem 0; color: #555; white-space: nowrap; }
+.profile-table td { padding: 0.4rem 0; }
 .errors { background: #fdecea; color: #b3261e; padding: 0.75rem 1.5rem; border-radius: 4px; }
 .flash { padding: 0.75rem 1.5rem; border-radius: 4px; margin-bottom: 1rem; max-width: 400px; width: 100%; }
 .flash-success { background: #e6f4ea; color: #1e7d32; }
