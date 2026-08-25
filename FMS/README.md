@@ -93,8 +93,61 @@ php database/test_connection.php
 # Expect: Connection OK, prepared statement OK, roles row count
 ```
 
+## PHASE 4 — Authentication (with a slice of Phase 5)
+
+**Schema fix found during this phase**: nothing linked `users` to `roles`, so
+the app could not tell students from admins. Migration
+`database/migrations/001_add_user_role.sql` adds `users.role_id`. Run it:
+
+```bash
+sudo mysql < database/migrations/001_add_user_role.sql
+```
+
+New files and their jobs:
+
+- `config/session.php` — starts the session with a hardened cookie and
+  defines the helpers used everywhere: `e()` (output escaping),
+  `require_login()` / `require_role()` (authorization), CSRF token helpers,
+  and flash messages. Read the comments — each helper explains the attack
+  it prevents.
+- `models/User.php` — all SQL for the users table: find, exists, create
+  (with `password_hash()`), record last login.
+- `controllers/AuthController.php` — register/login/logout logic:
+  validation, `password_verify()`, one generic login error (so attackers
+  can't probe which usernames exist), `session_regenerate_id()` against
+  session fixation.
+- `views/auth/login.php`, `views/auth/register.php` + shared
+  `views/layouts/header.php`/`footer.php`.
+- `public/index.php` — the FRONT CONTROLLER: the only browser-reachable PHP
+  file; routes `?page=...` to controller methods.
+- `database/create_admin.php` — CLI-only admin account creation
+  (public registration always creates students).
+
+Run the app locally:
+
+```bash
+cd FMS
+php -S localhost:8000
+# open http://localhost:8000/public/index.php
+```
+
+Create your admin account:
+
+```bash
+php database/create_admin.php admin admin@example.com StrongPass123
+```
+
+Verify Phase 4 (do each of these yourself):
+
+- [ ] Register a student → redirected to login with a success message
+- [ ] Wrong password → generic "Invalid username/email or password"
+- [ ] Non-existent user → the SAME generic error
+- [ ] Login → lands on the student dashboard
+- [ ] Visit `?page=admin_dashboard` as a student → 403 Forbidden
+- [ ] Visit a dashboard after logout → bounced to login
+- [ ] `SELECT password_hash FROM users;` → bcrypt hashes, never plain text
+
 ## Next phases
 
-Phase 4: authentication ·
-Phase 5: roles/authorization · Phases 6–16: student profile, applications,
+Phases 6–16: student profile, applications,
 admin review, placements, notifications, dashboards.
