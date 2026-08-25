@@ -76,8 +76,25 @@ cp config/config.example.php config/config.php
 - [ ] `SELECT * FROM roles;` shows `student` and `admin`
 - [ ] `config/config.php` exists locally and is NOT tracked by git (`git status`)
 
+## PHASE 3 — Central PDO connection
+
+One class, `config/Database.php`, owns the database connection. Every future
+model calls `Database::getConnection()` and gets the same shared PDO object —
+credentials live in exactly one git-ignored file (`config/config.php`) and
+only one connection is opened per request. The class file itself explains
+what PDO is, why prepared statements stop SQL injection, and why errors are
+logged instead of shown to visitors.
+
+Verify Phase 3:
+
+```bash
+cd FMS
+php database/test_connection.php
+# Expect: Connection OK, prepared statement OK, roles row count
+```
+
 ## Next phases
 
-Phase 3: central PDO connection · Phase 4: authentication ·
+Phase 4: authentication ·
 Phase 5: roles/authorization · Phases 6–16: student profile, applications,
 admin review, placements, notifications, dashboards.
