@@ -98,7 +98,21 @@ function user_has_permission(PDO $pdo, int $userId, string $permissionDesc): boo
     return $stmt->fetchColumn() > 0;
 }
 
-
+function render_breadcrumbs($current_page_title, $parent_page = null, $parent_url = '#') {
+    ?>
+    <div class="col-sm-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb float-sm-end float-sm-right">
+                <li class="breadcrumb-item"><a href="/FMS/index.php">Home</a></li>
+                <?php if ($parent_page): ?>
+                    <li class="breadcrumb-item"><a href="<?= $parent_url ?>"><?= htmlspecialchars($parent_page) ?></a></li>
+                <?php endif; ?>
+                <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($current_page_title) ?></li>
+            </ol>
+        </nav>
+    </div>
+    <?php
+}
 function get_user_roles(PDO $pdo, int $userId): array
 {
     $stmt = $pdo->prepare("
@@ -268,29 +282,9 @@ function get_all_application_windows(PDO $pdo): array
 }
 
 
-function get_all_organizations(PDO $pdo): array
-{
-    $stmt = $pdo->query("SELECT * FROM organizations ORDER BY name ASC");
-    return $stmt->fetchAll();
-}
-
-
-function get_departments_by_organization(PDO $pdo, int $orgId): array
-{
-    $stmt = $pdo->prepare("SELECT * FROM departments WHERE organization_id = ? ORDER BY name ASC");
-    $stmt->execute([$orgId]);
-    return $stmt->fetchAll();
-}
-
-
 function get_all_departments(PDO $pdo): array
 {
-    $stmt = $pdo->query("
-        SELECT d.*, o.name AS organization_name
-        FROM departments d
-        JOIN organizations o ON d.organization_id = o.id
-        ORDER BY o.name ASC, d.name ASC
-    ");
+    $stmt = $pdo->query("SELECT * FROM departments ORDER BY name ASC");
     return $stmt->fetchAll();
 }
 
@@ -355,14 +349,6 @@ function get_supervisors(PDO $pdo): array
           AND u.status = 'active'
         ORDER BY u.full_name ASC
     ");
-    return $stmt->fetchAll();
-}
-
-
-function get_supervisors_by_organization(PDO $pdo, int $orgId): array
-{
-    $stmt = $pdo->prepare("\n        SELECT u.* FROM users u\n        JOIN user_roles ur ON u.id = ur.user_id\n        JOIN roles r ON ur.role_id = r.id\n        WHERE r.name IN ('academic_supervisor', 'industrial_supervisor', 'supervisor')\n          AND u.status = 'active'\n          AND u.organization_id = ?\n        ORDER BY u.full_name ASC\n    ");
-    $stmt->execute([$orgId]);
     return $stmt->fetchAll();
 }
 
@@ -439,14 +425,13 @@ function get_placement(PDO $pdo, int $placementId): ?array
                a.reference_number,
                s.full_name AS student_name,
                s.registration_no,
-               o.name AS organization_name,
+
                d.name AS department_name,
                au.full_name AS academic_supervisor_name,
                iu.full_name AS industrial_supervisor_name
         FROM placements p
         JOIN applications a ON p.application_id = a.id
         JOIN students s ON a.student_id = s.id
-        JOIN organizations o ON p.organization_id = o.id
         JOIN departments d ON p.department_id = d.id
         LEFT JOIN users au ON p.academic_supervisor_id = au.id
         LEFT JOIN users iu ON p.industrial_supervisor_id = iu.id
@@ -472,13 +457,12 @@ function get_placement_by_student(PDO $pdo, int $studentId): ?array
     $stmt = $pdo->prepare("
         SELECT p.*,
                a.reference_number,
-               o.name AS organization_name,
+             
                d.name AS department_name,
                au.full_name AS academic_supervisor_name,
                iu.full_name AS industrial_supervisor_name
         FROM placements p
         JOIN applications a ON p.application_id = a.id
-        JOIN organizations o ON p.organization_id = o.id
         JOIN departments d ON p.department_id = d.id
         LEFT JOIN users au ON p.academic_supervisor_id = au.id
         LEFT JOIN users iu ON p.industrial_supervisor_id = iu.id
@@ -594,13 +578,6 @@ function count_placements(PDO $pdo): int
     return (int) $pdo->query("SELECT COUNT(*) FROM placements")->fetchColumn();
 }
 
-
-function count_organizations(PDO $pdo): int
-{
-    return (int) $pdo->query("SELECT COUNT(*) FROM organizations")->fetchColumn();
-}
-
-
 function count_active_windows(PDO $pdo): int
 {
     return (int) $pdo->query("
@@ -646,24 +623,6 @@ function status_label(string $status): string
 {
     return ucwords(str_replace('_', ' ', $status));
 }
-
-// ---------------------------------------------------------------------------
-// MULTI-STAGE REVIEW WORKFLOW HELPERS
-//
-// The application review pipeline is:
-//   Student submits
-//     → Secretary (checks completeness)
-//     → Field Coordinator (verifies academic details)
-//     → HOD (approves or rejects)
-//     → Placement Officer (assigns placement)
-//     → Done
-//
-// Each stage maps to a role. Only users with that role (or admin) can act.
-// ---------------------------------------------------------------------------
-
-/**
- * Ordered list of review stages. The order defines the pipeline.
- */
 function review_stages(): array
 {
     return ['secretary', 'field_coordinator', 'hod', 'placement_officer'];

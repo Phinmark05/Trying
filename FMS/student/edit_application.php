@@ -80,7 +80,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                 <div class="form-group">
                                     <label>Application Window</label>
-                                    <select name="application_window_id" class="form-control" required>
+                                    <select name="application_window_id" class="form-control">
                                         <option value="">— Select —</option>
                                         <?php foreach ($windows as $w): ?>
                                             <option value="<?= (int) $w['id'] ?>" <?= $app['application_window_id'] == $w['id'] ? 'selected' : '' ?>>
@@ -94,7 +94,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Training Type</label>
-                                            <select name="training_type_id" class="form-control" required>
+                                            <select name="training_type_id" class="form-control">
                                                 <option value="">— Select —</option>
                                                 <?php foreach ($trainingTypes as $t): ?>
                                                     <option value="<?= (int) $t['id'] ?>" <?= $app['training_type_id'] == $t['id'] ? 'selected' : '' ?>><?= e($t['name']) ?></option>
@@ -105,7 +105,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Study Level</label>
-                                            <select name="study_level_id" class="form-control" required>
+                                            <select name="study_level_id" class="form-control">
                                                 <option value="">— Select —</option>
                                                 <?php foreach ($studyLevels as $sl): ?>
                                                     <option value="<?= (int) $sl['id'] ?>" <?= $app['study_level_id'] == $sl['id'] ? 'selected' : '' ?>><?= e($sl['name']) ?></option>
@@ -119,7 +119,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Application Type</label>
-                                            <select name="application_type" class="form-control" required>
+                                            <select name="application_type" class="form-control">
                                                 <option value="initial" <?= $app['application_type'] === 'initial' ? 'selected' : '' ?>>Initial</option>
                                                 <option value="reapplication" <?= $app['application_type'] === 'reapplication' ? 'selected' : '' ?>>Reapplication</option>
                                             </select>
@@ -128,7 +128,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Skill Level</label>
-                                            <select name="skill_level" class="form-control" required>
+                                            <select name="skill_level" class="form-control">
                                                 <option value="beginner" <?= $app['skill_level'] === 'beginner' ? 'selected' : '' ?>>Beginner</option>
                                                 <option value="intermediate" <?= $app['skill_level'] === 'intermediate' ? 'selected' : '' ?>>Intermediate</option>
                                                 <option value="advanced" <?= $app['skill_level'] === 'advanced' ? 'selected' : '' ?>>Advanced</option>
@@ -139,15 +139,15 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                 <div class="form-group">
                                     <label>Interest Statement</label>
-                                    <textarea name="interest_statement" class="form-control" rows="3" required><?= e($app['interest_statement']) ?></textarea>
+                                    <textarea id="mytextarea" name="interest_statement" class="form-control" rows="3"><?= e($app['interest_statement']) ?></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Reason for Application</label>
-                                    <textarea name="reason_for_application" class="form-control" rows="3" required><?= e($app['reason_for_application']) ?></textarea>
+                                    <textarea id="mytextarea" name="reason_for_application" class="form-control" rows="3"><?= e($app['reason_for_application']) ?></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Expected Learning Objectives</label>
-                                    <textarea name="expected_learning_objectives" class="form-control" rows="3" required><?= e($app['expected_learning_objectives']) ?></textarea>
+                                    <textarea id="mytextarea" name="expected_learning_objectives" class="form-control" rows="3"><?= e($app['expected_learning_objectives']) ?></textarea>
                                 </div>
 
                                 <div class="row">
@@ -181,8 +181,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                 <button type="submit" name="action" value="draft" class="btn btn-secondary">Save Changes</button>
                                 <button type="submit" name="action" value="submit" class="btn btn-primary"
-                                        onclick="return confirm('Are you sure you want to resubmit this application?')">
-                                    Resubmit Application
+                                        onclick="return confirm('Are you sure you want to submit this application?') && confirm('Final Warning: Once submitted, you cannot edit your responses. Proceed?');">Submit Application
                                 </button>
                                 <a href="/FMS/student/my_application.php" class="btn btn-default">Cancel</a>
                             </form>

@@ -3,7 +3,7 @@
  * Admin Dashboard
  *
  * Shows summary statistics from the database:
- *   - Total students, applications, placements, organizations
+ *   - Total students, applications, and placements
  *   - Application counts by status (submitted, under review, accepted, etc.)
  *   - Active application windows
  *
@@ -21,7 +21,6 @@ $pageTitle = 'Admin Dashboard';
 $totalStudents      = count_students($pdo);
 $totalApps          = count_applications($pdo);
 $totalPlacements    = count_placements($pdo);
-$totalOrgs          = count_organizations($pdo);
 $activeWindows      = count_active_windows($pdo);
 $statusCounts       = get_application_status_counts($pdo);
 $stageCounts        = get_application_stage_counts($pdo);
@@ -98,7 +97,6 @@ include __DIR__ . '/../includes/sidebar.php';
                             <a href="/FMS/admin/applications.php?status=submitted" class="btn btn-info mb-2">Submitted Applications</a>
                             <a href="/FMS/admin/applications.php?status=under_review" class="btn btn-warning mb-2">Under Review</a>
                             <a href="/FMS/admin/applications.php?status=accepted" class="btn btn-success mb-2">Accepted</a>
-                            <a href="/FMS/admin/organizations.php" class="btn btn-primary mb-2">Manage Organizations</a>
                             <a href="/FMS/admin/application_windows.php" class="btn btn-secondary mb-2">Manage Windows</a>
                         </div>
                     </div>

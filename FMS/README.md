@@ -77,7 +77,6 @@ Students must register first via the registration page, then log in using their 
 - Accept applications
 - Reject applications (with reason)
 - Assign placements to accepted applications
-- Manage organizations (add, activate/deactivate)
 - Manage departments (add, activate/deactivate)
 - Manage supervisors (add supervisor users)
 - Manage students (view, suspend/activate)
@@ -120,7 +119,6 @@ FMS/
 │   ├── dashboard.php           # Admin statistics
 │   ├── applications.php        # List/filter/search applications
 │   ├── view_application.php    # Application detail + review actions
-│   ├── organizations.php       # Manage organizations
 │   ├── departments.php         # Manage departments
 │   ├── supervisors.php         # Manage supervisors
 │   ├── students.php            # Manage students
@@ -135,8 +133,6 @@ FMS/
 │   ├── accept_application.php   # Accept application
 │   ├── reject_application.php   # Reject application
 │   ├── create_placement.php     # Create placement
-│   ├── save_organization.php    # Create organization
-│   ├── toggle_organization.php  # Activate/deactivate org
 │   ├── save_department.php      # Create department
 │   ├── toggle_department.php    # Activate/deactivate dept
 │   ├── save_supervisor.php      # Create supervisor user

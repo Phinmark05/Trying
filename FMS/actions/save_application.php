@@ -1,31 +1,4 @@
 <?php
-/**
- * Save/Submit Application Action
- *
- * This action handles both creating new applications and editing existing
- * drafts/returned-for-correction applications.
- *
- * The "action" POST field determines the save mode:
- *   - "draft"  → saves with status 'draft'
- *   - "submit" → saves with status 'submitted' and sets submission_date
- *
- * If "application_id" is present in POST, this is an update; otherwise a new
- * application is created.
- *
- * Validation performed:
- *   - Student is authenticated
- *   - Application window exists and is active
- *   - Current date is within the window's open/close dates (on submit)
- *   - Training type exists
- *   - Study level exists
- *   - Required text fields are non-empty
- *   - End date is not before start date
- *   - At least one specialization is selected (on submit)
- *   - Duplicate applications are prevented (one active application per window per student)
- *   - On edit: application must belong to this student and be in an editable status
- *
- * After saving, an audit log entry is created.
- */
 require_once __DIR__ . '/../includes/functions.php';
 
 // Only accept POST
@@ -83,6 +56,9 @@ $objectives     = trim($_POST['expected_learning_objectives'] ?? '');
 $startDate      = $_POST['requested_start_date'] ?? '';
 $endDate        = $_POST['requested_end_date'] ?? '';
 $specializations = $_POST['specializations'] ?? [];
+$windowValue = $windowId > 0 ? $windowId : null;
+$trainingTypeValue = $trainingTypeId > 0 ? $trainingTypeId : null;
+$studyLevelValue = $studyLevelId > 0 ? $studyLevelId : null;
 
 // --- Validate enum values ---
 if (!in_array($appType, ['initial', 'reapplication'], true)) $appType = 'initial';
@@ -91,12 +67,14 @@ if (!in_array($skillLevel, ['beginner', 'intermediate', 'advanced'], true)) $ski
 // --- Validate required fields ---
 $errors = [];
 
-if ($windowId === 0) $errors[] = 'Please select an application window.';
-if ($trainingTypeId === 0) $errors[] = 'Please select a training type.';
-if ($studyLevelId === 0) $errors[] = 'Please select a study level.';
-if ($interest === '') $errors[] = 'Interest statement is required.';
-if ($reason === '') $errors[] = 'Reason for application is required.';
-if ($objectives === '') $errors[] = 'Expected learning objectives are required.';
+if ($action === 'submit') {
+    if ($windowId === 0) $errors[] = 'Please select an application window.';
+    if ($trainingTypeId === 0) $errors[] = 'Please select a training type.';
+    if ($studyLevelId === 0) $errors[] = 'Please select a study level.';
+    if ($interest === '') $errors[] = 'Interest statement is required.';
+    if ($reason === '') $errors[] = 'Reason for application is required.';
+    if ($objectives === '') $errors[] = 'Expected learning objectives are required.';
+}
 
 // Validate dates if both provided
 if ($startDate !== '' && $endDate !== '' && strtotime($endDate) < strtotime($startDate)) {
@@ -242,7 +220,7 @@ try {
             }
         }
 
-        $auditAction = $isSubmit ? 'application_resubmitted' : 'application_updated';
+        $auditAction = $isSubmit ? 'application_submitted' : 'application_updated';
         $newValues = ['status' => $status, 'window_id' => $windowId, 'training_type_id' => $trainingTypeId];
         log_application_action($pdo, $applicationId, null, $auditAction, $oldValues, $newValues);
     } else {
@@ -301,7 +279,7 @@ try {
 
 if ($isSubmit) {
     set_flash('success', $isEdit
-        ? 'Your application has been resubmitted successfully.'
+        ? 'Your application has been submitted successfully.'
         : 'Your application has been submitted successfully. Reference: ' . ($refNumber ?? ''));
 } else {
     set_flash('success', $isEdit

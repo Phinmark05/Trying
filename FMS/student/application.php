@@ -54,7 +54,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                 <!-- Application window -->
                                 <div class="form-group">
                                     <label>Application Window</label>
-                                    <select name="application_window_id" class="form-control" required>
+                                    <select name="application_window_id" class="form-control">
                                         <option value="">— Select —</option>
                                         <?php foreach ($windows as $w): ?>
                                             <option value="<?= (int) $w['id'] ?>">
@@ -68,7 +68,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Training Type</label>
-                                            <select name="training_type_id" class="form-control" required>
+                                            <select name="training_type_id" class="form-control">
                                                 <option value="">— Select —</option>
                                                 <?php foreach ($trainingTypes as $t): ?>
                                                     <option value="<?= (int) $t['id'] ?>"><?= e($t['name']) ?></option>
@@ -79,7 +79,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Study Level</label>
-                                            <select name="study_level_id" class="form-control" required>
+                                            <select name="study_level_id" class="form-control">
                                                 <option value="">— Select —</option>
                                                 <?php foreach ($studyLevels as $sl): ?>
                                                     <option value="<?= (int) $sl['id'] ?>"><?= e($sl['name']) ?></option>
@@ -93,7 +93,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Application Type</label>
-                                            <select name="application_type" class="form-control" required>
+                                            <select name="application_type" class="form-control">
                                                 <option value="initial">Initial</option>
                                                 <option value="reapplication">Reapplication</option>
                                             </select>
@@ -102,7 +102,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Skill Level</label>
-                                            <select name="skill_level" class="form-control" required>
+                                            <select name="skill_level" class="form-control">
                                                 <option value="beginner">Beginner</option>
                                                 <option value="intermediate">Intermediate</option>
                                                 <option value="advanced">Advanced</option>
@@ -113,31 +113,31 @@ include __DIR__ . '/../includes/sidebar.php';
 
                                 <div class="form-group">
                                     <label>Interest Statement</label>
-                                    <textarea name="interest_statement" class="form-control" rows="3" required></textarea>
+                                    <textarea id="mytextarea" name="interest_statement" class="form-control" rows="3"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Reason for Application</label>
-                                    <textarea name="reason_for_application" class="form-control" rows="3" required></textarea>
+                                    <textarea id="mytextarea" name="reason_for_application" class="form-control" rows="3"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Expected Learning Objectives</label>
-                                    <textarea name="expected_learning_objectives" class="form-control" rows="3" required></textarea>
+                                    <textarea id="mytextarea" name="expected_learning_objectives" class="form-control" rows="3"></textarea>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Requested Start Date</label>
-                                            <input type="date" name="requested_start_date" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Requested End Date</label>
-                                            <input type="date" name="requested_end_date" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="requested_start_date" class="form-label">Requested Start Date</label>
+            <input type="text" id="requested_start_date" name="requested_start_date" class="form-control" placeholder="Select start date">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="requested_end_date" class="form-label">Requested End Date</label>
+            <input type="text" id="requested_end_date" name="requested_end_date" class="form-control" placeholder="Select end date">
+        </div>
+    </div>
+</div>
 
                                 <!-- Specializations (multi-select via checkboxes) -->
                                 <div class="form-group">
@@ -153,15 +153,8 @@ include __DIR__ . '/../includes/sidebar.php';
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
-
-                                <!-- Submit button: save as draft (default) -->
                                 <button type="submit" name="action" value="draft" class="btn btn-secondary">Save as Draft</button>
-                                <!-- Submit button: submit immediately -->
-                                <button type="submit" name="action" value="submit" class="btn btn-primary"
-                                        onclick="return confirm('Are you sure you want to submit this application? You will not be able to edit it after submission unless it is returned for correction.')">
-                                    Submit Application
-                                </button>
-                            </form>
+                                 </form>
                             <?php endif; ?>
                         </div>
                     </div>

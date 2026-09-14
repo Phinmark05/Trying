@@ -5,7 +5,7 @@
  * Creates a placement for an accepted application. This action:
  *   1. Validates that the application exists, belongs to a student, and is 'accepted'
  *   2. Validates that no placement already exists for this application
- *   3. Validates organization is active, department belongs to the organization
+ *   3. Validates the department
  *   4. Validates supervisors are valid users
  *   5. Validates dates (end >= start)
  *   6. Uses a transaction to: create the placement, update application status
@@ -31,7 +31,6 @@ if (!verify_csrf()) {
 
 $userId        = (int) $_SESSION['user_id'];
 $applicationId = (int) ($_POST['application_id'] ?? 0);
-$orgId         = (int) ($_POST['organization_id'] ?? 0);
 $deptId        = (int) ($_POST['department_id'] ?? 0);
 $academicSup   = $_POST['academic_supervisor_id'] ?? '';
 $industrialSup = $_POST['industrial_supervisor_id'] ?? '';
@@ -71,25 +70,14 @@ if (get_placement_by_application($pdo, $applicationId)) {
     $errors[] = 'A placement already exists for this application.';
 }
 
-// --- Validate organization ---
-if ($orgId === 0) {
-    $errors[] = 'Please select an organization.';
-} else {
-    $stmt = $pdo->prepare("SELECT * FROM organizations WHERE id = ? AND is_active = 1");
-    $stmt->execute([$orgId]);
-    if (!$stmt->fetch()) {
-        $errors[] = 'The selected organization does not exist or is inactive.';
-    }
-}
-
-// --- Validate department belongs to the selected organization ---
+// --- Validate department ---
 if ($deptId === 0) {
     $errors[] = 'Please select a department.';
-} elseif ($orgId > 0) {
-    $stmt = $pdo->prepare("SELECT * FROM departments WHERE id = ? AND organization_id = ?");
-    $stmt->execute([$deptId, $orgId]);
+} else {
+    $stmt = $pdo->prepare("SELECT id FROM departments WHERE id = ? AND is_active = 1");
+    $stmt->execute([$deptId]);
     if (!$stmt->fetch()) {
-        $errors[] = 'The selected department does not belong to the selected organization.';
+        $errors[] = 'The selected department does not exist or is inactive.';
     }
 }
 
@@ -127,13 +115,13 @@ try {
     // 1. Create the placement record
     $stmt = $pdo->prepare("
         INSERT INTO placements
-            (application_id, organization_id, department_id,
+            (application_id, department_id,
              academic_supervisor_id, industrial_supervisor_id,
              start_date, end_date, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+        VALUES (?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
-        $applicationId, $orgId, $deptId,
+        $applicationId, $deptId,
         $academicSupId, $industrialSupId,
         $startDate, $endDate,
     ]);
@@ -149,7 +137,6 @@ try {
     // 3. Create a placement audit log entry
     $newValues = [
         'placement_id'           => $placementId,
-        'organization_id'       => $orgId,
         'department_id'          => $deptId,
         'academic_supervisor_id' => $academicSupId,
         'industrial_supervisor_id' => $industrialSupId,

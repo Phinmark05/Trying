@@ -5,7 +5,7 @@ USE LAS;
 CREATE TABLE roles (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 name VARCHAR(50) NOT NULL UNIQUE,
-description VARCHAR(255) NULL,
+description VARCHAR(255) NULL   ,
 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -34,7 +34,6 @@ password VARCHAR(255) NOT NULL,
 full_name VARCHAR(150) NOT NULL,
 phone_number VARCHAR(30) NULL,
 designation VARCHAR(100) NULL,
-organization_id INT UNSIGNED NULL,
 department_id INT UNSIGNED NULL,
 remember_token VARCHAR(100) NULL,
 email_verified_at DATETIME NULL,
@@ -114,34 +113,17 @@ CONSTRAINT fk_students_education_level FOREIGN KEY (study_level_id) REFERENCES s
 INDEX idx_students_search (full_name, course_of_study)
 ) ENGINE=InnoDB;
 
--- 5. ORGANIZATIONS & DEPARTMENTS
-CREATE TABLE organizations (
-id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-name VARCHAR(150) NOT NULL,
-type ENUM('company','government','ngo','university','research_institution','other') NOT NULL DEFAULT 'company',
-email VARCHAR(150) NULL,
-phone_number VARCHAR(30) NULL,
-address VARCHAR(255) NULL,
-is_active BOOLEAN NOT NULL DEFAULT TRUE,
-created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-CONSTRAINT uq_organization_name_type UNIQUE (name, type)
-);
-
 CREATE TABLE departments (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-organization_id INT UNSIGNED NOT NULL,
 name VARCHAR(100) NOT NULL,
 is_active BOOLEAN NOT NULL DEFAULT TRUE,
 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-CONSTRAINT fk_departments_organization FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE RESTRICT,
-CONSTRAINT uq_department_org_name UNIQUE (organization_id, name)
+CONSTRAINT uq_department_name UNIQUE (name)
 );
 
--- Foreign keys referencing organization & department in users
+-- Foreign key referencing department in users
 ALTER TABLE users
-ADD CONSTRAINT fk_users_organization FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE SET NULL,
 ADD CONSTRAINT fk_users_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL;
 
 -- 6. APPLICATION WINDOWS (With Max Capacity)
@@ -173,15 +155,15 @@ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMEST
 CREATE TABLE applications (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 student_id INT UNSIGNED NOT NULL,
-application_window_id INT UNSIGNED NOT NULL,
-training_type_id INT UNSIGNED NOT NULL,
-study_level_id INT UNSIGNED NOT NULL,
+application_window_id INT UNSIGNED NULL,
+training_type_id INT UNSIGNED NULL,
+study_level_id INT UNSIGNED NULL,
 reference_number VARCHAR(40) NOT NULL UNIQUE,
 application_type ENUM('initial', 'reapplication') NOT NULL DEFAULT 'initial',
 skill_level ENUM('beginner', 'intermediate', 'advanced') NOT NULL,
-interest_statement TEXT NOT NULL,
-reason_for_application TEXT NOT NULL,
-expected_learning_objectives TEXT NOT NULL,
+interest_statement TEXT NULL,
+reason_for_application TEXT NULL,
+expected_learning_objectives TEXT NULL,
 requested_start_date DATE NULL,
 requested_end_date DATE NULL,
 status ENUM('draft', 'submitted', 'under_review', 'returned_for_correction', 'accepted', 'rejected', 'cancelled', 'placement_assigned', 'in_training', 'completed') NOT NULL DEFAULT 'draft',
@@ -244,7 +226,6 @@ CONSTRAINT fk_reviews_comment FOREIGN KEY (comment_id) REFERENCES comments(id) O
 CREATE TABLE placements (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 application_id INT UNSIGNED NOT NULL UNIQUE,
-organization_id INT UNSIGNED NOT NULL,
 department_id INT UNSIGNED NOT NULL,
 academic_supervisor_id INT UNSIGNED NULL,
 industrial_supervisor_id INT UNSIGNED NULL,
@@ -255,7 +236,6 @@ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 CONSTRAINT fk_placements_application FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE RESTRICT,
 CONSTRAINT fk_placements_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE RESTRICT,
-CONSTRAINT fk_placements_organization FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE RESTRICT,
 CONSTRAINT fk_placements_academic_sup FOREIGN KEY (academic_supervisor_id) REFERENCES users(id) ON DELETE SET NULL,
 CONSTRAINT fk_placements_industrial_sup FOREIGN KEY (industrial_supervisor_id) REFERENCES users(id) ON DELETE SET NULL,
 CONSTRAINT chk_placement_dates CHECK (end_date >= start_date)
@@ -317,13 +297,12 @@ INSERT INTO roles (name, description) VALUES
 ('hod', 'Head of Department — reviews and approves/rejects'),
 ('placement_officer', 'Processes placement after HOD approval'),
 ('academic_supervisor', 'Academic supervisor who oversees students'),
-('industrial_supervisor', 'Industrial supervisor at the placement organization'),
+('industrial_supervisor', 'Industrial placement supervisor'),
 ('supervisor', 'General supervisor role');
 
 -- Permissions
 INSERT INTO permissions (description) VALUES
 ('manage_applications'),
-('manage_organizations'),
 ('manage_departments'),
 ('manage_students'),
 ('manage_windows'),

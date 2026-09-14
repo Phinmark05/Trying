@@ -21,7 +21,6 @@ $pageTitle = 'My Dashboard';
 $totalStudents      = count_students($pdo);
 $totalApps          = count_applications($pdo);
 $totalPlacements    = count_placements($pdo);
-$totalOrgs          = count_organizations($pdo);
 $activeWindows      = count_active_windows($pdo);
 $statusCounts       = get_application_status_counts($pdo);
 $stageCounts        = get_application_stage_counts($pdo);

@@ -1,23 +1,5 @@
 <?php
-/**
- * Admin Staff Management
- *
- * Lists all staff users and their roles. Provides a form to create
- * new staff accounts with any staff role:
- *   - Secretary
- *   - Field Coordinator
- *   - HOD
- *   - Placement Officer
- *   - Academic Supervisor
- *   - Industrial Supervisor
- *   - Supervisor
- *
- * Admins can also assign additional roles to existing users via the
- * "Assign Role" dropdown on each row.
- */
 require_once __DIR__ . '/../includes/admin_check.php';
-
-// Only admins can manage staff
 if (!current_user_is_admin()) {
     set_flash('error', 'Only administrators can manage staff accounts.');
     redirect('/FMS/admin/dashboard.php');
@@ -27,7 +9,6 @@ $pageTitle = 'Staff Management';
 
 $users   = get_all_users($pdo);
 $roles   = get_all_roles($pdo);
-$orgs    = get_all_organizations($pdo);
 
 // Build a map of role_id => role_name for quick lookup
 $roleMap = [];
@@ -52,7 +33,7 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="container-fluid">
             <div class="row">
                 <!-- Create new staff user -->
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card card-primary">
                         <div class="card-header"><h3 class="card-title">Add Staff Member</h3></div>
                         <div class="card-body">
@@ -83,15 +64,6 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <input type="text" name="designation" class="form-control" placeholder="e.g. Head of Department">
                                 </div>
                                 <div class="form-group">
-                                    <label>Organization (optional)</label>
-                                    <select name="organization_id" class="form-control">
-                                        <option value="">— None —</option>
-                                        <?php foreach ($orgs as $o): ?>
-                                            <option value="<?= (int) $o['id'] ?>"><?= e($o['name']) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="form-group">
                                     <label>Role</label>
                                     <select name="role_id" class="form-control" required>
                                         <option value="">— Select Role —</option>
@@ -115,7 +87,7 @@ include __DIR__ . '/../includes/sidebar.php';
                 </div>
 
                 <!-- All staff users -->
-                <div class="col-md-8">
+                <div class="col-md-9">
                     <div class="card">
                         <div class="card-header"><h3 class="card-title">All Staff Members</h3></div>
                         <div class="card-body p-0">
@@ -127,11 +99,12 @@ include __DIR__ . '/../includes/sidebar.php';
                                         <th>Email</th>
                                         <th>Role(s)</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (empty($users)): ?>
-                                        <tr><td colspan="5" class="text-center text-muted">No staff members found.</td></tr>
+                                        <tr><td colspan="6" class="text-center text-muted">No staff members found.</td></tr>
                                     <?php else: ?>
                                         <?php foreach ($users as $u): ?>
                                         <tr>
@@ -162,7 +135,15 @@ include __DIR__ . '/../includes/sidebar.php';
                                                 endforeach;
                                                 ?>
                                             </td>
-                                            <td><span class="badge bg-success"><?= e(ucfirst($u['status'])) ?></span></td>
+                                            <td><?php if ($u['status'] === 'suspended'): ?>
+                                                <span class="badge bg-danger">Suspended</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-success"><?= e(ucfirst($u['status'])) ?></span>
+                                            <?php endif; ?></td>
+                                            <td>
+                                                <a href="/FMS/admin/edit_supervisor.php?id=<?= (int) $u['id'] ?>" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
                                         </tr>
                                         <?php endforeach; ?>
                                     <?php endif; ?>

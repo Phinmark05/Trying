@@ -74,11 +74,7 @@
                             <i class="nav-icon fas fa-user-graduate"></i><p>Students</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="/FMS/admin/organizations.php" class="nav-link <?= ($_SERVER['SCRIPT_NAME'] ?? '') === '/FMS/admin/organizations.php' ? 'active' : '' ?>">
-                            <i class="nav-icon fas fa-building"></i><p>Organizations</p>
-                        </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a href="/FMS/admin/departments.php" class="nav-link <?= ($_SERVER['SCRIPT_NAME'] ?? '') === '/FMS/admin/departments.php' ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-sitemap"></i><p>Departments</p>

@@ -74,7 +74,6 @@ include __DIR__ . '/../includes/sidebar.php';
                         <div class="card-header"><h3 class="card-title">Placement</h3></div>
                         <div class="card-body">
                             <?php if ($placement): ?>
-                                <p><strong>Organization:</strong> <?= e($placement['organization_name']) ?></p>
                                 <p><strong>Department:</strong> <?= e($placement['department_name']) ?></p>
                                 <p><strong>Academic Supervisor:</strong> <?= e($placement['academic_supervisor_name'] ?? '—') ?></p>
                                 <p><strong>Industrial Supervisor:</strong> <?= e($placement['industrial_supervisor_name'] ?? '—') ?></p>

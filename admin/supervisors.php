@@ -27,7 +27,6 @@ $pageTitle = 'Staff Management';
 
 $users   = get_all_users($pdo);
 $roles   = get_all_roles($pdo);
-$orgs    = get_all_organizations($pdo);
 
 // Build a map of role_id => role_name for quick lookup
 $roleMap = [];
@@ -81,15 +80,6 @@ include __DIR__ . '/../includes/sidebar.php';
                                 <div class="form-group">
                                     <label>Designation</label>
                                     <input type="text" name="designation" class="form-control" placeholder="e.g. Head of Department">
-                                </div>
-                                <div class="form-group">
-                                    <label>Organization (optional)</label>
-                                    <select name="organization_id" class="form-control">
-                                        <option value="">— None —</option>
-                                        <?php foreach ($orgs as $o): ?>
-                                            <option value="<?= (int) $o['id'] ?>"><?= e($o['name']) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>

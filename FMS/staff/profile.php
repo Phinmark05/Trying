@@ -61,18 +61,6 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <label>Phone Number</label>
                                     <input type="text" name="phone_number" class="form-control" value="<?= e($currentUser['phone_number'] ?? '') ?>">
                                 </div>
-
-                                <hr>
-                                <h5>Change Password (leave blank to keep current)</h5>
-                                <div class="form-group">
-                                    <label>New Password</label>
-                                    <input type="password" name="new_password" class="form-control" minlength="6">
-                                </div>
-                                <div class="form-group">
-                                    <label>Confirm New Password</label>
-                                    <input type="password" name="new_password_confirm" class="form-control" minlength="6">
-                                </div>
-
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                             </form>
                         </div>
@@ -89,6 +77,24 @@ include __DIR__ . '/../includes/sidebar.php';
                                 Your role and designation are managed by the administrator.
                                 If you need a change, please contact the admin.
                             </p>
+                        </div>
+                    </div>
+                    <div class="card card-primary">
+                        <div class="card-header"><h3 class="card-title">Change Password</h3></div>
+                        <div class="card-body">
+                            <form action="/FMS/actions/update_staff_profile.php" method="post">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="password">
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" name="new_password" class="form-control" minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" name="new_password_confirm" class="form-control" minlength="6">
+                                </div>
+                                <button type="submit" class="btn btn-warning">Change Password</button>
+                            </form>
                         </div>
                     </div>
                 </div>

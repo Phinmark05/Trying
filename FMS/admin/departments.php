@@ -2,9 +2,7 @@
 /**
  * Admin Departments Management
  *
- * Lists all departments (with their organization) and provides a form
- * to add new departments. Departments belong to organizations via
- * the existing foreign key relationship.
+ * Lists all departments and provides a form to add new departments.
  */
 require_once __DIR__ . '/../includes/admin_check.php';
 
@@ -17,7 +15,6 @@ if (!current_user_is_admin()) {
 $pageTitle = 'Departments';
 
 $departments = get_all_departments($pdo);
-$orgs        = get_all_organizations($pdo);
 
 include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/navbar.php';
@@ -38,17 +35,7 @@ include __DIR__ . '/../includes/sidebar.php';
                         <div class="card-body">
                             <form action="/FMS/actions/save_department.php" method="post">
                                 <?= csrf_field() ?>
-                                <div class="form-group">
-                                    <label>Organization</label>
-                                    <select name="organization_id" class="form-control" required>
-                                        <option value="">— Select —</option>
-                                        <?php foreach ($orgs as $o): ?>
-                                            <?php if ($o['is_active']): ?>
-                                                <option value="<?= (int) $o['id'] ?>"><?= e($o['name']) ?> (<?= e(ucwords(str_replace('_', ' ', $o['type']))) ?>)</option>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
+                                
                                 <div class="form-group">
                                     <label>Department Name</label>
                                     <input type="text" name="name" class="form-control" required>
@@ -63,11 +50,10 @@ include __DIR__ . '/../includes/sidebar.php';
                         <div class="card-header"><h3 class="card-title">All Departments</h3></div>
                         <div class="card-body p-0">
                             <table class="table table-striped">
-                                <thead><tr><th>Organization</th><th>Department</th><th>Active</th><th>Actions</th></tr></thead>
+                                <thead><tr><th>Department</th><th>Active</th><th>Actions</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($departments as $d): ?>
                                     <tr>
-                                        <td><?= e($d['organization_name']) ?></td>
                                         <td><?= e($d['name']) ?></td>
                                         <td>
                                             <?php if ($d['is_active']): ?>

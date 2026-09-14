@@ -30,7 +30,6 @@ $email       = trim($_POST['email'] ?? '');
 $password    = $_POST['password'] ?? '';
 $phone       = trim($_POST['phone_number'] ?? '');
 $designation = trim($_POST['designation'] ?? '');
-$orgId       = (int) ($_POST['organization_id'] ?? 0);
 $roleId      = (int) ($_POST['role_id'] ?? 0);
 
 $errors = [];
@@ -79,14 +78,13 @@ try {
 
     // Insert the user record
     $stmt = $pdo->prepare("
-        INSERT INTO users (username, email, password, full_name, phone_number, designation, organization_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO users (username, email, password, full_name, phone_number, designation)
+        VALUES (?, ?, ?, ?, ?, ?)
     ");
     $stmt->execute([
         $username, $email, $hashedPassword, $fullName,
         $phone !== '' ? $phone : null,
         $designation !== '' ? $designation : null,
-        $orgId > 0 ? $orgId : null,
     ]);
 
     $newUserId = (int) $pdo->lastInsertId();

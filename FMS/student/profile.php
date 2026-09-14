@@ -51,6 +51,26 @@ include __DIR__ . '/../includes/sidebar.php';
                             </form>
                         </div>
                     </div>
+                    <div class="card card-primary">
+                        <div class="card-header"><h3 class="card-title">Change Password</h3></div>
+                        <div class="card-body">
+                            <form action="/FMS/actions/update_profile.php" method="post">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="form_type" value="password">
+                             <hr>
+                                <h5>Change Password (leave blank to keep current)</h5>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" name="new_password" class="form-control" minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" name="new_password_confirm" class="form-control" minlength="6">
+                                </div>
+                                <button type="submit" class="btn btn-warning">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-8">
                     <div class="card card-primary">
@@ -83,7 +103,7 @@ include __DIR__ . '/../includes/sidebar.php';
                                 </div>
                                 <div class="form-group">
                                     <label>Date of Birth</label>
-                                    <input type="date" name="dob" class="form-control" value="<?= e($currentStudent['dob'] ?? '') ?>">
+                                    <input id="dob" type="text" name="dob" class="form-control" value="<?= e($currentStudent['dob'] ?? '') ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Nationality</label>
@@ -112,19 +132,11 @@ include __DIR__ . '/../includes/sidebar.php';
                                     <input type="text" name="course_of_study" class="form-control" value="<?= e($currentStudent['course_of_study'] ?? '') ?>">
                                 </div>
 
-                                <hr>
-                                <h5>Change Password (leave blank to keep current)</h5>
-                                <div class="form-group">
-                                    <label>New Password</label>
-                                    <input type="password" name="new_password" class="form-control" minlength="6">
-                                </div>
-                                <div class="form-group">
-                                    <label>Confirm New Password</label>
-                                    <input type="password" name="new_password_confirm" class="form-control" minlength="6">
-                                </div>
+                               
 
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                             </form>
+                            
                         </div>
                     </div>
                 </div>

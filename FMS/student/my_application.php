@@ -60,8 +60,13 @@ include __DIR__ . '/../includes/sidebar.php';
                                     $canEdit = in_array($a['status'], ['draft', 'returned_for_correction'], true);
                                     ?>
                                     <?php if ($canEdit): ?>
-                                        <a href="/FMS/student/edit_application.php?id=<?= (int) $a['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="/FMS/student/edit_application.php?id=<?= (int) $a['id'] ?>" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
                                     <?php endif; ?>
+                                    <a href="/FMS/student/view_application.php?id=<?= (int) $a['id'] ?>" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

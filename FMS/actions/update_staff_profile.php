@@ -1,33 +1,17 @@
 <?php
-/**
- * Update Staff Profile Action
- *
- * Processes the staff profile form. Updates only the fields the staff
- * user is allowed to change: full_name, email, phone_number, and
- * password (if provided). Role, designation, and username are NOT
- * editable by the staff user.
- */
 require_once __DIR__ . '/../includes/functions.php';
-
-// Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/FMS/auth/login.php');
 }
-
-// Must be a logged-in staff user
 if (empty($_SESSION['user_id'])) {
     redirect('/FMS/auth/login.php');
 }
-
-// Verify CSRF token
 if (!verify_csrf()) {
     set_flash('error', 'Invalid form submission.');
     redirect('/FMS/staff/profile.php');
 }
 
 $userId = (int) $_SESSION['user_id'];
-
-// Load current user record
 $user = get_user($pdo, $userId);
 if (!$user) {
     session_destroy();
@@ -45,6 +29,29 @@ $email          = trim($_POST['email'] ?? '');
 $phoneNumber   = trim($_POST['phone_number'] ?? '');
 $newPassword     = $_POST['new_password'] ?? '';
 $newPasswordConf = $_POST['new_password_confirm'] ?? '';
+
+// The password card is submitted separately from the profile details form.
+if (($_POST['action'] ?? '') === 'password') {
+    if ($newPassword === '') {
+        set_flash('error', 'Please enter a new password.');
+        redirect('/FMS/staff/profile.php');
+    }
+
+    if (strlen($newPassword) < 6) {
+        set_flash('error', 'New password must be at least 6 characters.');
+        redirect('/FMS/staff/profile.php');
+    }
+
+    if ($newPassword !== $newPasswordConf) {
+        set_flash('error', 'New passwords do not match.');
+        redirect('/FMS/staff/profile.php');
+    }
+
+    $stmt = $pdo->prepare('UPDATE users SET password = ? WHERE id = ?');
+    $stmt->execute([password_hash($newPassword, PASSWORD_DEFAULT), $userId]);
+    set_flash('success', 'Password changed successfully.');
+    redirect('/FMS/staff/profile.php');
+}
 
 // --- Validate ---
 $errors = [];

@@ -1,7 +1,5 @@
 <?php
-/**
- * AJAX endpoint: Get supervisors by organization.
- */
+/** AJAX endpoint: Get active supervisors. */
 require_once __DIR__ . '/../includes/functions.php';
 
 if (empty($_SESSION['user_id'])) {
@@ -10,10 +8,4 @@ if (empty($_SESSION['user_id'])) {
     exit;
 }
 
-$orgId = (int) ($_GET['organization_id'] ?? 0);
-if ($orgId === 0) {
-    echo json_encode([]);
-    exit;
-}
-
-echo json_encode(get_supervisors_by_organization($pdo, $orgId));
+echo json_encode(get_supervisors($pdo));

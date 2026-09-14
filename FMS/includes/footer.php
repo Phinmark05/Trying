@@ -3,9 +3,11 @@
 ?>
 </div>
 <footer class="main-footer">
-    <strong>LinkFLow</strong> — Field Application Management System
+    &copy; <?= date('Y') ?> <strong>LinkFLow</strong> — Field Application Management System
 </footer>
 </div>
+<!-- flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <!-- jQuery (required by AdminLTE) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -15,5 +17,6 @@
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 <!-- Custom JS -->
 <script src="/FMS/assets/js/script.js"></script>
+
 </body>
 </html>

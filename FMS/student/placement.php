@@ -3,7 +3,7 @@
  * Student Placement Page
  *
  * Shows the student's placement details if one has been assigned.
- * This includes organization, department, supervisors, dates, and status.
+ * This includes department, supervisors, dates, and status.
  * If no placement exists, an informational message is shown.
  */
 require_once __DIR__ . '/../includes/student_check.php';
@@ -32,7 +32,6 @@ include __DIR__ . '/../includes/sidebar.php';
                             <div class="card-body">
                                 <table class="table table-bordered">
                                     <tr><th>Reference</th><td><?= e($placement['reference_number']) ?></td></tr>
-                                    <tr><th>Organization</th><td><?= e($placement['organization_name']) ?></td></tr>
                                     <tr><th>Department</th><td><?= e($placement['department_name']) ?></td></tr>
                                     <tr><th>Academic Supervisor</th><td><?= e($placement['academic_supervisor_name'] ?? 'Not assigned') ?></td></tr>
                                     <tr><th>Industrial Supervisor</th><td><?= e($placement['industrial_supervisor_name'] ?? 'Not assigned') ?></td></tr>

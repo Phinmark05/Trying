@@ -260,22 +260,11 @@ include __DIR__ . '/../includes/sidebar.php';
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="application_id" value="<?= (int) $appId ?>">
                                 <div class="form-group">
-                                    <label>Organization</label>
-                                    <select name="organization_id" id="organizationSelect" class="form-control" required>
-                                        <option value="">— Select —</option>
-                                        <?php
-                                        $orgs = get_all_organizations($pdo);
-                                        foreach ($orgs as $o): ?>
-                                            <option value="<?= (int) $o['id'] ?>" <?= $o['is_active'] ? '' : 'disabled' ?>><?= e($o['name']) ?> (<?= e($o['type']) ?>)<?= $o['is_active'] ? '' : ' — Inactive' ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="form-group">
                                     <label>Department</label>
                                     <select name="department_id" id="departmentSelect" class="form-control" required>
-                                        <option value="">— Select organization first —</option>
+                                        <option value="">— Select —</option>
                                     </select>
-                                    <small class="text-muted">Departments will load after selecting an organization.</small>
+                                    <small class="text-muted">Select the department for this placement.</small>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -395,33 +384,22 @@ include __DIR__ . '/../includes/sidebar.php';
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-<!-- JavaScript to load departments when an organization is selected -->
+<!-- Load departments and supervisors for the placement form. -->
 <script>
 $(document).ready(function() {
-    $('#organizationSelect').on('change', function() {
-        var orgId = $(this).val();
-        var deptSelect = $('#departmentSelect');
-        deptSelect.empty();
-        if (!orgId) {
-            deptSelect.append('<option value="">— Select organization first —</option>');
-            $('#academicSupervisorSelect, #industrialSupervisorSelect').html('<option value="">— Select organization first —</option>');
-            return;
-        }
-        $.get('/FMS/actions/get_departments.php', { organization_id: orgId }, function(data) {
-            deptSelect.append('<option value="">— Select —</option>');
-            data.forEach(function(d) {
-                deptSelect.append('<option value="' + d.id + '"' + (d.is_active == 0 ? ' disabled' : '') + '>' + d.name + (d.is_active == 0 ? ' — Inactive' : '') + '</option>');
-            });
-        }, 'json');
+    var deptSelect = $('#departmentSelect');
+    $.get('/FMS/actions/get_departments.php', function(data) {
+        data.forEach(function(d) {
+            deptSelect.append('<option value="' + d.id + '">' + d.name + '</option>');
+        });
+    }, 'json');
 
-        var supervisorSelects = $('#academicSupervisorSelect, #industrialSupervisorSelect');
-        supervisorSelects.html('<option value="">Loading supervisors...</option>');
-        $.get('/FMS/actions/get_supervisors.php', { organization_id: orgId }, function(data) {
-            supervisorSelects.html('<option value="">— None —</option>');
-            data.forEach(function(s) {
-                supervisorSelects.append('<option value="' + s.id + '">' + s.full_name + ' (' + s.username + ')</option>');
-            });
-        }, 'json');
-    });
+    var supervisorSelects = $('#academicSupervisorSelect, #industrialSupervisorSelect');
+    $.get('/FMS/actions/get_supervisors.php', function(data) {
+        supervisorSelects.html('<option value="">— None —</option>');
+        data.forEach(function(s) {
+            supervisorSelects.append('<option value="' + s.id + '">' + s.full_name + ' (' + s.username + ')</option>');
+        });
+    }, 'json');
 });
 </script>
